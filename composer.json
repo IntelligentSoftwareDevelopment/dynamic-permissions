@@ -1,0 +1,18 @@
+{
+    "name": "isoftd/dynamic-permissions",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Isoftd\\DynamicPermissions\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Insomniac",
+            "email": "ins0mniac1van@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
