@@ -1,10 +1,13 @@
 {
     "name": "isoftd/dynamic-permissions",
+    "version": "0.0.2",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Isoftd\\DynamicPermissions\\": "src/"
+            "Isoftd\\DynamicPermissions\\": "src/",
+            "Isoftd\\DynamicPermissions\\App\\": "src/app",
+            "Isoftd\\DynamicPermissions\\Providers\\": "src/providers"
         }
     },
     "authors": [
@@ -14,5 +17,16 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "spatie/laravel-permission": "^6.17",
+        "isoftd/enummethods": "^1.0",
+        "dragon-code/laravel-deploy-operations": "^7.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Isoftd\\DynamicPermissions\\Providers\\DynamicPermissionProvider"
+            ]
+        }
+    }
 }
