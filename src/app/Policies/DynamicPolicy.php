@@ -1,5 +1,6 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\Policies;
 
@@ -10,8 +11,9 @@ use Isoftd\DynamicPermissions\App\ValueObjects\RolesAndPermissions\PermissionEnu
 class DynamicPolicy
 {
     protected string $permissionsEnum;
+
     public function __construct(
-    ){
+    ) {
         $this->permissionsEnum = config('dynamic-permissions.default-permissions-value-object');
     }
 
@@ -82,7 +84,7 @@ class DynamicPolicy
     {
         $class = Str::before(class_basename(static::class), 'Policy');
 
-        return $class . '.' . Str::studly($permission->value);
+        return $class.'.'.Str::studly($permission->value);
     }
 
     protected function userHasPermissionToAll(Model $user): bool

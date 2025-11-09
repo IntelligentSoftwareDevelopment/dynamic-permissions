@@ -2,10 +2,4 @@
 
 namespace Isoftd\DynamicPermissions\App\Contracts;
 
-/**
- *
- */
-interface PermissionsEnumInterface
-{
-
-}
+interface PermissionsEnumInterface {}

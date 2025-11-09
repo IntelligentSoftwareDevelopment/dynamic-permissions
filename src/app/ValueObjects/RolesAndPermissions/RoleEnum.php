@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\ValueObjects\RolesAndPermissions;
 
 use Isoftd\DynamicPermissions\App\Contracts\RoleEnumInterface;
+
 enum RoleEnum: string implements RoleEnumInterface
 {
     use HasRoleEnumMethods;

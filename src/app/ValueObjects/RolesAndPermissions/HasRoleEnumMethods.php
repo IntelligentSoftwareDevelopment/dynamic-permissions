@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\ValueObjects\RolesAndPermissions;
@@ -17,7 +18,7 @@ trait HasRoleEnumMethods
 
     public static function shouldBeSeeded(): array
     {
-        return collect(static::cases())->filter(fn (RoleEnumInterface $role) => !$role->is(static::alreadySeeded()))->toArray();
+        return collect(static::cases())->filter(fn (RoleEnumInterface $role) => ! $role->is(static::alreadySeeded()))->toArray();
     }
 
     public static function alreadySeeded(): array

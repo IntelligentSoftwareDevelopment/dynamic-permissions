@@ -9,8 +9,7 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 class HasNovaResource
 {
     /**
-     * @param NovaRequest $request
-     * @param Builder<Model> $query
+     * @param  Builder<Model>  $query
      * @return Builder<Model>
      */
     public function checkOwnership(NovaRequest $request, Builder $query): Builder

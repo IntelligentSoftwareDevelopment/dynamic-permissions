@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\Services;
@@ -11,10 +12,9 @@ use Spatie\Permission\Models\Role;
 class PermissionsService
 {
     /**
-     * @param Collection<array-key, Role> $roles
-     * @param string $which
+     * @param  Collection<array-key, Role>  $roles
+     *
      * @throws Exception
-     * @return void
      */
     public static function addPermissionsToRoles(Collection $roles, string $which): void
     {
@@ -22,10 +22,9 @@ class PermissionsService
     }
 
     /**
-     * @param Collection<array-key, Role> $roles
-     * @param string $which
+     * @param  Collection<array-key, Role>  $roles
+     *
      * @throws Exception
-     * @return void
      */
     public static function removePermissionsFromRoles(Collection $roles, string $which): void
     {
@@ -33,11 +32,9 @@ class PermissionsService
     }
 
     /**
-     * @param Collection<array-key, Role> $roles
-     * @param string $which
-     * @param PermissionsFunction $function
+     * @param  Collection<array-key, Role>  $roles
+     *
      * @throws Exception
-     * @return void
      */
     private static function execute(Collection $roles, string $which, PermissionsFunction $function): void
     {
@@ -45,7 +42,7 @@ class PermissionsService
 
         foreach ($listedPermissions as $class => $item) {
             foreach ($item as $permission => $actualRoles) {
-                $nameOfPermission = $class . '.' . $permission;
+                $nameOfPermission = $class.'.'.$permission;
                 $listedPermission = match (true) {
                     $function->isAssignRole() => Permission::create(['name' => $nameOfPermission]),
                     $function->isRemoveRole() => Permission::where('name', $nameOfPermission)->first(),
@@ -101,61 +98,61 @@ class PermissionsService
         ],
     ];
 
-//    private const array ONLY_ADMINS = [
-//        PermissionEnum::ALL->value => [
-//            RoleEnum::SUPER_ADMIN,
-//        ],
-//        PermissionEnum::VIEW->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::VIEW_ANY->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::CREATE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::UPDATE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::DELETE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::RESTORE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::FORCE_DELETE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//    ];
-//
-//    private const array ADMINS_AND_OWNERS = [
-//        PermissionEnum::ALL->value => [
-//            RoleEnum::SUPER_ADMIN,
-//        ],
-//        PermissionEnum::VIEW->value => [
-//            RoleEnum::ADMIN,
-//            RoleEnum::CUSTOMER,
-//        ],
-//        PermissionEnum::VIEW_ANY->value => [
-//            RoleEnum::ADMIN,
-//            RoleEnum::CUSTOMER,
-//        ],
-//        PermissionEnum::CREATE->value => [
-//            RoleEnum::ADMIN,
-//            RoleEnum::CUSTOMER,
-//        ],
-//        PermissionEnum::UPDATE->value => [
-//            RoleEnum::ADMIN,
-//            RoleEnum::CUSTOMER,
-//        ],
-//        PermissionEnum::DELETE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::RESTORE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//        PermissionEnum::FORCE_DELETE->value => [
-//            RoleEnum::ADMIN,
-//        ],
-//    ];
+    //    private const array ONLY_ADMINS = [
+    //        PermissionEnum::ALL->value => [
+    //            RoleEnum::SUPER_ADMIN,
+    //        ],
+    //        PermissionEnum::VIEW->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::VIEW_ANY->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::CREATE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::UPDATE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::DELETE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::RESTORE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::FORCE_DELETE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //    ];
+    //
+    //    private const array ADMINS_AND_OWNERS = [
+    //        PermissionEnum::ALL->value => [
+    //            RoleEnum::SUPER_ADMIN,
+    //        ],
+    //        PermissionEnum::VIEW->value => [
+    //            RoleEnum::ADMIN,
+    //            RoleEnum::CUSTOMER,
+    //        ],
+    //        PermissionEnum::VIEW_ANY->value => [
+    //            RoleEnum::ADMIN,
+    //            RoleEnum::CUSTOMER,
+    //        ],
+    //        PermissionEnum::CREATE->value => [
+    //            RoleEnum::ADMIN,
+    //            RoleEnum::CUSTOMER,
+    //        ],
+    //        PermissionEnum::UPDATE->value => [
+    //            RoleEnum::ADMIN,
+    //            RoleEnum::CUSTOMER,
+    //        ],
+    //        PermissionEnum::DELETE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::RESTORE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //        PermissionEnum::FORCE_DELETE->value => [
+    //            RoleEnum::ADMIN,
+    //        ],
+    //    ];
 }

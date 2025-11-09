@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\Providers;
@@ -18,11 +19,11 @@ class DynamicPermissionProvider extends ServiceProvider
     private function publishAssets(): void
     {
         $this->publishes([
-            __DIR__ . '/../config/dynamic-permissions.php' => config_path('dynamic-permissions.php'),
+            __DIR__.'/../config/dynamic-permissions.php' => config_path('dynamic-permissions.php'),
         ], 'dynamic-permissions-config');
 
         $this->publishes([
-            __DIR__ . '/../app/ValueObjects' => app_path('Domains/DynamicPermissions/ValueObjects'),
+            __DIR__.'/../app/ValueObjects' => app_path('Domains/DynamicPermissions/ValueObjects'),
         ], 'dynamic-permissions-value-object');
     }
 
@@ -30,7 +31,7 @@ class DynamicPermissionProvider extends ServiceProvider
     {
         $policiesValueObject = config('dynamic-permissions.default-policies-value-object');
 
-        if (!$policiesValueObject instanceof PolicyInterface) {
+        if (! $policiesValueObject instanceof PolicyInterface) {
             return;
         }
 
