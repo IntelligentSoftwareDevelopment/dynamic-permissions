@@ -4,17 +4,59 @@ declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\Policies;
 
+use App\Domains\Identity\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use Isoftd\DynamicPermissions\App\ValueObjects\RolesAndPermissions\PermissionEnum;
+use Isoftd\DynamicPermissions\App\Contracts\PermissionsEnumInterface;
+use Isoftd\DynamicPermissions\App\Services\PermissionNameBuilder;
+use Spatie\Permission\Exceptions\PermissionDoesNotExist;
 
 class DynamicPolicy
 {
     protected string $permissionsEnum;
 
+    protected string $permissionNameSeparator;
+
     public function __construct(
     ) {
-        $this->permissionsEnum = config('dynamic-permissions.default-permissions-value-object');
+        /** @var string $permissionEnum */
+        $permissionEnum = Config::get('dynamic-permissions.default-permission-enum');
+        /** @var string $nameSeparator */
+        $nameSeparator = Config::get('dynamic-permissions.permission-name-separator');
+        $this->permissionsEnum = $permissionEnum;
+        $this->permissionNameSeparator = $nameSeparator;
+    }
+
+    /**
+     * @param  array<array-key, Model>  $arguments
+     */
+    public function __call(string $name, array $arguments): bool
+    {
+        $admin = $arguments[0] ?? null;
+
+        if (is_null($admin)) {
+            return false;
+        }
+
+        if (method_exists($this, $name)) {
+            /** @phpstan-ignore-next-line */
+            return $this->{$name}(...$arguments);
+        }
+
+        $permission = $this->permissionsEnum::tryFrom(Str::ucfirst(Str::camel($name)));
+
+        if (is_null($permission)) {
+            return false;
+        }
+
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($admin, $permission);
+    }
+
+    public function getPrefix(): ?string
+    {
+        return null;
     }
 
     /**
@@ -22,6 +64,7 @@ class DynamicPolicy
      */
     public function viewAny(Model $user): bool
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasAccessTo($user, $this->permissionsEnum::VIEW_ANY);
     }
 
@@ -30,7 +73,8 @@ class DynamicPolicy
      */
     public function view(Model $user, Model $resource): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::VIEW) && $this->isBelongsTo($user, $resource);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::VIEW) && $this->isBelongsTo($user, $resource);
     }
 
     /**
@@ -38,7 +82,8 @@ class DynamicPolicy
      */
     public function create(Model $user): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::CREATE);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::CREATE);
     }
 
     /**
@@ -46,7 +91,8 @@ class DynamicPolicy
      */
     public function update(Model $user, Model $resource): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::UPDATE) && $this->isBelongsTo($user, $resource);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::UPDATE) && $this->isBelongsTo($user, $resource);
     }
 
     /**
@@ -54,7 +100,8 @@ class DynamicPolicy
      */
     public function delete(Model $user, Model $resource): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::DELETE) && $this->isBelongsTo($user, $resource);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::DELETE) && $this->isBelongsTo($user, $resource);
     }
 
     /**
@@ -62,7 +109,8 @@ class DynamicPolicy
      */
     public function restore(Model $user, Model $model): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::RESTORE);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::RESTORE);
     }
 
     /**
@@ -70,32 +118,67 @@ class DynamicPolicy
      */
     public function forceDelete(Model $user, Model $model): bool
     {
-        return $this->hasAccessTo($user, PermissionEnum::FORCE_DELETE);
+        /** @phpstan-ignore-next-line */
+        return $this->hasAccessTo($user, $this->permissionsEnum::FORCE_DELETE);
     }
 
-    protected function hasAccessTo(Model $user, PermissionEnum $permissionEnum): bool
+    protected function hasAccessTo(Model $user, PermissionsEnumInterface $permissionEnum): bool
     {
         $permission = $this->extractPermission($permissionEnum);
 
-        return $user->hasPermissionTo($permission) || $this->userHasPermissionToAll($user);
+        try {
+            if (method_exists($user, 'hasPermissionTo')) {
+                // Check wildcard/ALL permission first to avoid exception when specific permission doesn't exist
+                if ($this->userHasPermissionToAll($user)) {
+                    return true;
+                }
+
+                /** @var bool $result */
+                $result = $user->hasPermissionTo($permission);
+
+                return $result;
+            }
+
+            return false;
+        } catch (PermissionDoesNotExist) {
+            // If permission doesn't exist, deny access for security
+            return false;
+        }
     }
 
-    protected function extractPermission(PermissionEnum $permission): string
+    protected function extractPermission(PermissionsEnumInterface $permission): string
     {
-        $class = Str::before(class_basename(static::class), 'Policy');
+        $className = class_basename(static::class);
+        $class = Str::before($className, 'Policy');
+        $prefix = $this->getPrefix();
 
-        return $class.'.'.Str::studly($permission->value);
+        if (! is_null($prefix) && config('dynamic-permissions.policy-prefix')) {
+            $class = PermissionNameBuilder::build($prefix, $class);
+        }
+
+        /** @phpstan-ignore-next-line */
+        return PermissionNameBuilder::build($class, Str::studly($permission->value));
     }
 
     protected function userHasPermissionToAll(Model $user): bool
     {
-        $superAdminPermission = $this->extractPermission(PermissionEnum::ALL);
+        /** @phpstan-ignore-next-line */
+        $superAdminPermission = $this->extractPermission($this->permissionsEnum::ALL);
 
-        return $user->hasPermissionTo($superAdminPermission);
+        try {
+            if (method_exists($user, 'hasPermissionTo')) {
+                /** @phpstan-ignore-next-line */
+                return $user->hasPermissionTo($superAdminPermission);
+            }
+
+            return false;
+        } catch (PermissionDoesNotExist) {
+            return true;
+        }
     }
 
-    protected function isBelongsTo(Model $author, Model $resource): bool
+    protected function isBelongsTo(Model $owner, Model $resource): bool
     {
-        return $this->userHasPermissionToAll($author);
+        return $this->userHasPermissionToAll($owner);
     }
 }

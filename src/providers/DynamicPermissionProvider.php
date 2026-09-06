@@ -23,13 +23,19 @@ class DynamicPermissionProvider extends ServiceProvider
         ], 'dynamic-permissions-config');
 
         $this->publishes([
-            __DIR__.'/../app/ValueObjects' => app_path('Domains/DynamicPermissions/ValueObjects'),
+            __DIR__.'/../app/ValueObjects' => config('dynamic-permissions.value_objects_path'),
         ], 'dynamic-permissions-value-object');
     }
 
     private function loadPolicies(): void
     {
         $policiesValueObject = config('dynamic-permissions.default-policies-value-object');
+
+        if (! is_string($policiesValueObject)) {
+            return;
+        }
+
+        $policiesValueObject = app($policiesValueObject);
 
         if (! $policiesValueObject instanceof PolicyInterface) {
             return;

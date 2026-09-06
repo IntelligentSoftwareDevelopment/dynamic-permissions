@@ -10,7 +10,8 @@ return [
     'default-role-enum' => RoleEnum::class,
     'default-permission-enum' => PermissionEnum::class,
     'default-policies-value-object' => Policies::class,
-    'models_with_base_policy' => [
-
-    ],
+    'permission-container' => null,
+    'policy-prefix' => false,
+    'permission-name-separator' => '.',
+    'value_objects_path' => app_path('ValueObjects'),
 ];

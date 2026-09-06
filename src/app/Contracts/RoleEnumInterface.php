@@ -4,15 +4,25 @@ declare(strict_types=1);
 
 namespace Isoftd\DynamicPermissions\App\Contracts;
 
+use BackedEnum;
 use Spatie\Permission\Models\Role;
 
-interface RoleEnumInterface
+interface RoleEnumInterface extends BackedEnum
 {
-    public function is(...$cases): bool;
-
+    /**
+     * @return array<array-key, RoleEnumInterface>
+     */
     public static function shouldBeSeeded(): array;
 
+    /**
+     * @return array<array-key, RoleEnumInterface>
+     */
     public static function alreadySeeded(): array;
 
-    public function getModel(): Role;
+    /**
+     * @param  array<array-key, RoleEnumInterface|null>  $cases
+     */
+    public function is(...$cases): bool;
+
+    public function getModel(): ?Role;
 }
