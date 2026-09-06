@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Isoftd\DynamicPermissions\App\Policies;
 
 use Illuminate\Database\Eloquent\Builder;

@@ -16,18 +16,26 @@ trait HasRoleEnumMethods
 {
     use HasEnumMethods;
 
+    /**
+     * @return array<array-key, RoleEnumInterface>
+     */
     public static function shouldBeSeeded(): array
     {
-        return collect(static::cases())->filter(fn (RoleEnumInterface $role) => ! $role->is(static::alreadySeeded()))->toArray();
+        /** @phpstan-ignore-next-line */
+        return collect(static::cases())->filter(fn (RoleEnumInterface $role): bool => ! $role->is(static::alreadySeeded()))->toArray();
     }
 
+    /**
+     * @return array<array-key, RoleEnumInterface>
+     */
     public static function alreadySeeded(): array
     {
-        return Role::all()->map(fn (Role $role) => static::try($role->name))->toArray();
+        /** @phpstan-ignore-next-line */
+        return Role::query()->get()->map(fn (Role $role): ?RoleEnumInterface => static::try($role->name))->toArray();
     }
 
-    public function getModel(): Role
+    public function getModel(): ?Role
     {
-        return Role::where('name', $this->value)->first();
+        return Role::query()->where('name', $this->value)->first();
     }
 }

@@ -6,5 +6,8 @@ namespace Isoftd\DynamicPermissions\App\Contracts;
 
 interface PolicyInterface
 {
-    public static function getPolicies();
+    /**
+     * @return array<class-string, class-string>
+     */
+    public static function getPolicies(): array;
 }

@@ -1,6 +1,6 @@
 {
     "name": "isoftd/dynamic-permissions",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -18,7 +18,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "spatie/laravel-permission": "^6.17",
+        "spatie/laravel-permission": "^8.0",
         "isoftd/enummethods": "^1.0",
         "dragon-code/laravel-deploy-operations": "^7.1"
     },
@@ -28,5 +28,11 @@
                 "Isoftd\\DynamicPermissions\\Providers\\DynamicPermissionProvider"
             ]
         }
-    }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:IntelligentSoftwareDevelopment/enum-methods.git"
+        }
+    ]
 }

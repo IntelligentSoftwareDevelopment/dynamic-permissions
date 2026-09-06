@@ -11,6 +11,9 @@ final class Policies implements PolicyInterface
     private const array POLICIES = [
     ];
 
+    /**
+     * @return array<class-string, class-string>
+     */
     public static function getPolicies(): array
     {
         return self::POLICIES;
